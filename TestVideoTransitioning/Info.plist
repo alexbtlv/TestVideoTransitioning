@@ -60,5 +60,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Test would like to access to your Photo Library.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Test would like to access to your Photo Library.</string>
 </dict>
 </plist>
