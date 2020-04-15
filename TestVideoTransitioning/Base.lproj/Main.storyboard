@@ -15,7 +15,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ccq-8W-ZGb">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ccq-8W-ZGb">
                                 <rect key="frame" x="20" y="293.5" width="330" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="485-oM-ByA"/>
@@ -37,15 +37,15 @@
                                     <constraint firstAttribute="width" secondItem="y3W-EI-Egs" secondAttribute="height" multiplier="1:1" id="3as-jN-mGF"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pCK-lT-pHM">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pCK-lT-pHM">
                                 <rect key="frame" x="20" y="360" width="330" height="40"/>
                                 <state key="normal" title="Add second video"/>
                                 <connections>
                                     <action selector="loadAssetTwo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="j4C-NT-B24"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S2T-3x-KMd">
-                                <rect key="frame" x="20" y="450" width="374" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S2T-3x-KMd">
+                                <rect key="frame" x="20" y="450" width="330" height="30"/>
                                 <state key="normal" title="Merge videos"/>
                                 <connections>
                                     <action selector="merge:" destination="BYZ-38-t0r" eventType="touchUpInside" id="THE-bO-VCq"/>
@@ -54,6 +54,13 @@
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="TZd-CL-dWy">
                                 <rect key="frame" x="197" y="203.5" width="20" height="20"/>
                             </activityIndicatorView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FDC-UN-dnO">
+                                <rect key="frame" x="20" y="516" width="330" height="30"/>
+                                <state key="normal" title="Play video"/>
+                                <connections>
+                                    <action selector="playVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1lo-mL-meZ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -61,17 +68,21 @@
                             <constraint firstItem="pCK-lT-pHM" firstAttribute="width" secondItem="ccq-8W-ZGb" secondAttribute="width" id="3CX-Am-4zo"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="y3W-EI-Egs" secondAttribute="trailing" constant="20" id="4CG-ZQ-8Nh"/>
                             <constraint firstItem="S2T-3x-KMd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="5cc-Z9-2oa"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="S2T-3x-KMd" secondAttribute="trailing" constant="20" id="5lO-kW-Gwr"/>
                             <constraint firstItem="S2T-3x-KMd" firstAttribute="height" secondItem="pCK-lT-pHM" secondAttribute="height" multiplier="0.75" id="EI0-Kx-F5Y"/>
+                            <constraint firstItem="FDC-UN-dnO" firstAttribute="height" secondItem="S2T-3x-KMd" secondAttribute="height" id="EZw-vI-9Dv"/>
+                            <constraint firstItem="FDC-UN-dnO" firstAttribute="centerX" secondItem="S2T-3x-KMd" secondAttribute="centerX" id="HtK-p1-WAS"/>
                             <constraint firstItem="y3W-EI-Egs" firstAttribute="leading" secondItem="pCK-lT-pHM" secondAttribute="trailing" constant="20" id="IHD-qV-8aa"/>
                             <constraint firstItem="ccq-8W-ZGb" firstAttribute="centerY" secondItem="vhw-HE-dMa" secondAttribute="centerY" id="NpR-Iz-1YJ"/>
+                            <constraint firstItem="FDC-UN-dnO" firstAttribute="width" secondItem="S2T-3x-KMd" secondAttribute="width" id="O6a-m0-jJZ"/>
                             <constraint firstItem="ccq-8W-ZGb" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" multiplier="0.7" id="SJt-WY-pkt"/>
                             <constraint firstItem="vhw-HE-dMa" firstAttribute="leading" secondItem="ccq-8W-ZGb" secondAttribute="trailing" constant="20" id="TVS-So-2N2"/>
                             <constraint firstItem="y3W-EI-Egs" firstAttribute="height" secondItem="pCK-lT-pHM" secondAttribute="height" multiplier="0.6" id="U4f-eW-lHc"/>
                             <constraint firstItem="S2T-3x-KMd" firstAttribute="top" secondItem="pCK-lT-pHM" secondAttribute="bottom" constant="50" id="XBM-SB-KTa"/>
                             <constraint firstItem="pCK-lT-pHM" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="ZFd-UD-dZQ"/>
                             <constraint firstItem="ccq-8W-ZGb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="Zpg-Mk-Vcr"/>
+                            <constraint firstItem="S2T-3x-KMd" firstAttribute="width" secondItem="pCK-lT-pHM" secondAttribute="width" id="gg0-BQ-jug"/>
                             <constraint firstItem="pCK-lT-pHM" firstAttribute="top" secondItem="ccq-8W-ZGb" secondAttribute="bottom" constant="26.5" id="h3e-y5-nVE"/>
+                            <constraint firstItem="FDC-UN-dnO" firstAttribute="top" secondItem="S2T-3x-KMd" secondAttribute="bottom" constant="36" id="iGP-fK-EwF"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="vhw-HE-dMa" secondAttribute="trailing" constant="20" id="iyg-Tr-LWl"/>
                             <constraint firstItem="vhw-HE-dMa" firstAttribute="height" secondItem="ccq-8W-ZGb" secondAttribute="height" multiplier="0.6" id="kmS-7i-XyP"/>
                             <constraint firstItem="pCK-lT-pHM" firstAttribute="height" secondItem="ccq-8W-ZGb" secondAttribute="height" id="ktg-Jx-hR1"/>

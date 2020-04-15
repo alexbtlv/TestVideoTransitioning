@@ -9,6 +9,7 @@
 import UIKit
 import MobileCoreServices
 import MediaPlayer
+import AVKit
 import Photos
 
 final class MainViewController: UIViewController {
@@ -29,6 +30,7 @@ final class MainViewController: UIViewController {
     }
     private var audioAsset: AVAsset?
     private var loadingAssetOne = false
+    private var loadingAssetTwo = false
     private var isSavedPhotosAvailable: Bool {
         guard !UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) else { return true }
         
@@ -47,9 +49,13 @@ final class MainViewController: UIViewController {
     
     @IBAction func loadAssetTwo(_ sender: AnyObject) {
       if isSavedPhotosAvailable {
-        loadingAssetOne = false
+        loadingAssetTwo = true
         VideoHelper.startMediaBrowser(delegate: self, sourceType: .savedPhotosAlbum)
       }
+    }
+    
+    @IBAction func playVideo(_ sender: Any) {
+        VideoHelper.startMediaBrowser(delegate: self, sourceType: .savedPhotosAlbum)
     }
     
     @IBAction func merge(_ sender: AnyObject) {
@@ -130,7 +136,7 @@ final class MainViewController: UIViewController {
         mainComposition.instructions = [mainInstruction]
         mainComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
         mainComposition.renderSize = targetSize
-//        mainComposition.customVideoCompositorClass = INSTVideoCompositing.self
+        mainComposition.customVideoCompositorClass = INSTVideoCompositing.self
         
         // 4 - Get path
       guard let documentDirectory = FileManager.default.urls(for: .documentDirectory,
@@ -181,7 +187,9 @@ final class MainViewController: UIViewController {
           
           DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel) { [weak self] _ in
+                if success { self?.showPlayer(for: outputURL) }
+            })
             self.present(alert, animated: true, completion: nil)
           }
           
@@ -199,6 +207,13 @@ final class MainViewController: UIViewController {
         saveVideoToPhotos()
       }
     }
+    
+    private func showPlayer(for url: URL) {
+        let player = AVPlayer(url: url)
+        let vcPlayer = AVPlayerViewController()
+        vcPlayer.player = player
+        present(vcPlayer, animated: true, completion: nil)
+    }
 }
 
 extension MainViewController : UIImagePickerControllerDelegate {
@@ -211,21 +226,28 @@ extension MainViewController : UIImagePickerControllerDelegate {
                 let url = info[UIImagePickerController.InfoKey.mediaURL] as? URL
               else { return }
             
-            let avAsset = AVAsset(url: url)
-            var message = ""
-            if self.loadingAssetOne {
-              message = "Video one loaded"
-              self.firstAsset = avAsset
+            
+            if !self.loadingAssetOne && !self.loadingAssetTwo {
+                self.showPlayer(for: url)
             } else {
-              message = "Video two loaded"
-              self.secondAsset = avAsset
+                let avAsset = AVAsset(url: url)
+                var message = ""
+                if self.loadingAssetOne {
+                    message = "Video one loaded"
+                    self.firstAsset = avAsset
+                    self.loadingAssetOne = false
+                } else if self.loadingAssetTwo {
+                    message = "Video two loaded"
+                    self.secondAsset = avAsset
+                    self.loadingAssetTwo = false
+                }
+                let alert = UIAlertController(title: "Asset Loaded", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
             }
-            let alert = UIAlertController(title: "Asset Loaded", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-          }
-        }
-        
+            
+          } // end dispach main block
+        } // end dismissal completion block
     }
 }
 
