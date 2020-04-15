@@ -65,7 +65,7 @@ final class MainViewController: UIViewController {
 
         activityIndicator.startAnimating()
 
-        // 1 - Create AVMutableComposition object. This object will hold AVMutableCompositionTrack instances.
+        // 1 - Create AVMutableComposition
         let mixComposition = AVMutableComposition()
         var instructions = [AVMutableVideoCompositionLayerInstruction]()
         var lastTime = CMTime.zero
@@ -87,16 +87,6 @@ final class MainViewController: UIViewController {
         // Setup Layer Instruction 1
 
         let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrackOne)
-        let duration = CMTime(seconds: 1, preferredTimescale: 30)
-        let transitTime = CMTime(seconds: 1, preferredTimescale: 30)
-        let insertTime = CMTimeSubtract(firstAsset.duration, transitTime)
-        let targetWidth = floor(UIScreen.main.bounds.size.width / 16) * 16
-        let targetHeight = floor(UIScreen.main.bounds.size.height / 16) * 16
-        let targetSize = CGSize(width: targetWidth, height: targetHeight)
-        mixComposition.naturalSize = targetSize
-        
-        let transform = VideoHelper.transform(avAsset: firstAsset, targetSize: targetSize)
-        layerInstruction.setTransform(transform, at: CMTime.zero)
         instructions.append(layerInstruction)
         
         lastTime = CMTimeAdd(lastTime, firstAsset.duration)
@@ -107,7 +97,7 @@ final class MainViewController: UIViewController {
             return
         }
 
-        let transitionTime = CMTime(seconds: 2, preferredTimescale: 60)
+        let transitionTime = CMTime(seconds: 1.333, preferredTimescale: 60)
         let newLastTime = CMTimeSubtract(firstAsset.duration, transitionTime)
 
         let timeRangeTwo = CMTimeRangeMake(start: CMTime.zero, duration: secondAsset.duration)
@@ -121,9 +111,6 @@ final class MainViewController: UIViewController {
         // Setup Layer Instruction 2
 
         let layerInstructionTwo = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrackTwo)
-        let assetTrackTwo = secondAsset.tracks(withMediaType: .video)[0]
-        let transformTwo = VideoHelper.transform(avAsset: secondAsset, targetSize: targetSize)
-        layerInstructionTwo.setTransform(transformTwo, at: CMTime.zero)
         instructions.append(layerInstructionTwo)
         
         // Setup Video Composition
@@ -132,6 +119,11 @@ final class MainViewController: UIViewController {
         mainInstruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: CMTimeAdd(newLastTime, secondAsset.duration))
         mainInstruction.layerInstructions = instructions
         
+        let targetWidth = floor(UIScreen.main.bounds.size.width / 16) * 16
+        let targetHeight = floor(UIScreen.main.bounds.size.height / 16) * 16
+        let targetSize = CGSize(width: targetWidth, height: targetHeight)
+        mixComposition.naturalSize = targetSize
+        
         let mainComposition = AVMutableVideoComposition()
         mainComposition.instructions = [mainInstruction]
         mainComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
@@ -139,32 +131,30 @@ final class MainViewController: UIViewController {
         mainComposition.customVideoCompositorClass = INSTVideoCompositing.self
         
         // 4 - Get path
-      guard let documentDirectory = FileManager.default.urls(for: .documentDirectory,
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory,
                                                              in: .userDomainMask).first else {
-        return
-      }
-      let dateFormatter = DateFormatter()
-      dateFormatter.dateStyle = .long
-      dateFormatter.timeStyle = .short
-      let date = dateFormatter.string(from: Date())
-      let url = documentDirectory.appendingPathComponent("mergeVideo-\(date).mov")
-
-      // 5 - Create Exporter
-      guard let exporter = AVAssetExportSession(asset: mixComposition,
-                                                presetName: AVAssetExportPresetHighestQuality) else {
-        return
-      }
-      exporter.outputURL = url
-      exporter.outputFileType = AVFileType.mov
-      exporter.shouldOptimizeForNetworkUse = true
-      exporter.videoComposition = mainComposition
-
-      // 6 - Perform the Export
-      exporter.exportAsynchronously() {
-        DispatchQueue.main.async {
-          self.exportDidFinish(exporter)
+            return
         }
-      }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .short
+        let date = dateFormatter.string(from: Date())
+        let url = documentDirectory.appendingPathComponent("mergeVideo-\(date).mov")
+
+        // 5 - Create Exporter
+        guard let exporter = AVAssetExportSession(asset: mixComposition,
+                                                presetName: AVAssetExportPresetHighestQuality) else {
+            return
+        }
+        exporter.outputURL = url
+        exporter.outputFileType = AVFileType.mov
+        exporter.shouldOptimizeForNetworkUse = true
+        exporter.videoComposition = mainComposition
+
+        // 6 - Perform the Export
+        exporter.exportAsynchronously() {
+            DispatchQueue.main.async { self.exportDidFinish(exporter) }
+        }
 
     }
     
@@ -178,34 +168,33 @@ final class MainViewController: UIViewController {
         }
         
         let saveVideoToPhotos = {
-        PHPhotoLibrary.shared().performChanges({
-          PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputURL)
-        }) { saved, error in
-          let success = saved && (error == nil)
-          let title = success ? "Success" : "Error"
-          let message = success ? "Video saved" : "Failed to save video"
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputURL)
+            }) { saved, error in
+                let success = saved && (error == nil)
+                let title = success ? "Success" : "Error"
+                let message = success ? "Video saved" : "Failed to save video"
           
-          DispatchQueue.main.async {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel) { [weak self] _ in
-                if success { self?.showPlayer(for: outputURL) }
-            })
-            self.present(alert, animated: true, completion: nil)
-          }
-          
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel) { [weak self] _ in
+                        if success { self?.showPlayer(for: outputURL) }
+                    })
+                    self.present(alert, animated: true, completion: nil)
+                }
+            }
         }
-      }
       
-      // Ensure permission to access Photo Library
-      if PHPhotoLibrary.authorizationStatus() != .authorized {
-        PHPhotoLibrary.requestAuthorization { status in
-          if status == .authorized {
+        // Ensure permission to access Photo Library
+        if PHPhotoLibrary.authorizationStatus() != .authorized {
+            PHPhotoLibrary.requestAuthorization { status in
+                if status == .authorized {
+                    saveVideoToPhotos()
+                }
+            }
+        } else {
             saveVideoToPhotos()
-          }
         }
-      } else {
-        saveVideoToPhotos()
-      }
     }
     
     private func showPlayer(for url: URL) {
